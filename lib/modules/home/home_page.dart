@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../core/theme/images.dart';
 import '../../core/views/error_view.dart';
 import '../../core/views/loading_view.dart';
 import 'components/company_tile.dart';
@@ -15,6 +16,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: Image.asset(Images.logoTractian)),
       body: BlocBuilder<HomeController, HomeState>(
         bloc: _controller,
         builder: (context, state) => switch (state) {
