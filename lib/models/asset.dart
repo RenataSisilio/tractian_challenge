@@ -1,7 +1,9 @@
-class Asset {
+import 'named_entity.dart';
+
+final class Asset extends NamedEntity {
   Asset({
-    required this.id,
-    required this.name,
+    required super.id,
+    required super.name,
     this.locationId,
     this.parentId,
     this.sensorId,
@@ -10,8 +12,6 @@ class Asset {
     this.gatewayId,
   });
 
-  final String id;
-  final String name;
   final String? locationId;
   final String? parentId;
   final String? sensorId;

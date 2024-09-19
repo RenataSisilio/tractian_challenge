@@ -1,11 +1,11 @@
-final class Location {
+import 'named_entity.dart';
+
+final class Location extends NamedEntity {
   Location({
-    required this.id,
-    required this.name,
+    required super.id,
+    required super.name,
     this.parentId,
   });
 
-  final String id;
-  final String name;
   final String? parentId;
 }

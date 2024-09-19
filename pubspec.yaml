@@ -66,6 +66,6 @@ flutter:
     - assets/images/
 
   fonts:
-    - family:  TractianChallenge
+    - family:  Tractian
       fonts:
-        - asset: assets/icons/TractianChallenge.ttf
+        - asset: assets/icons/TractianIcons.ttf

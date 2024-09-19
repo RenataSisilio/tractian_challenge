@@ -1,19 +1,15 @@
 import '../../core/app_errors.dart';
-import '../../models/asset.dart';
-import '../../models/location.dart';
+import '../../models/named_entity.dart';
 
 sealed class AssetState {}
 
 final class LoadingAssetState extends AssetState {}
 
 final class SuccessAssetState extends AssetState {
-  SuccessAssetState({required this.locations, required this.assets});
+  SuccessAssetState(this.items);
 
-  /// The list of locations in the current tree.
-  final List<Location> locations;
-
-  /// The list of assets in the current tree.
-  final List<Asset> assets;
+  /// The list of locations and assets in the current tree.
+  final List<NamedEntity> items;
 }
 
 final class ErrorAssetState extends AssetState {

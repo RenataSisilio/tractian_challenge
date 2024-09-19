@@ -1,10 +1,9 @@
 import 'package:bloc/bloc.dart';
+import 'package:tractian_challenge/models/named_entity.dart';
 
 import '../../core/app_errors.dart';
 import '../../data/repositories/asset_repository.dart';
 import '../../data/repositories/location_repository.dart';
-import '../../models/asset.dart';
-import '../../models/location.dart';
 import 'asset_states.dart';
 
 class AssetController extends Cubit<AssetState> {
@@ -19,17 +18,26 @@ class AssetController extends Cubit<AssetState> {
     emit(LoadingAssetState());
 
     try {
+      final List<NamedEntity> allItems = [];
+
       final results = await Future.wait([
         _locationRepo.getAllLocations(companyId),
         _assetRepo.getAllAssets(companyId),
       ]);
 
-      final locations = results.first as List<Location>;
-      final assets = results.last as List<Asset>;
+      for (var e in results) {
+        allItems.addAll(e);
+      }
 
-      emit(SuccessAssetState(locations: locations, assets: assets));
+      emit(SuccessAssetState(allItems));
     } on AppError catch (e) {
       emit(ErrorAssetState(e));
     }
   }
+
+  void filterByName(String search) {}
+
+  void filterEnergySensor(bool isFiltering) {}
+
+  void filterCritical(bool isFiltering) {}
 }

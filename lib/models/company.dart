@@ -1,9 +1,8 @@
-final class Company {
-  Company({
-    required this.id,
-    required this.name,
-  });
+import 'named_entity.dart';
 
-  final String id;
-  final String name;
+final class Company extends NamedEntity {
+  Company({
+    required super.id,
+    required super.name,
+  });
 }
