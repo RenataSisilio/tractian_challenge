@@ -35,7 +35,7 @@ class AssetPage extends StatelessWidget {
           SuccessAssetState() => Column(
               children: [
                 Header(_controller),
-                AssetTree(items: state.items),
+                AssetTree(tree: state.tree),
               ],
             ),
         },

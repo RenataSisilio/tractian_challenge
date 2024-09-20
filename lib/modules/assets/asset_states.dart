@@ -1,15 +1,15 @@
 import '../../core/app_errors.dart';
-import '../../models/named_entity.dart';
+import '../../core/utils/typedefs/tree_node.dart';
 
 sealed class AssetState {}
 
 final class LoadingAssetState extends AssetState {}
 
 final class SuccessAssetState extends AssetState {
-  SuccessAssetState(this.items);
+  SuccessAssetState(this.tree);
 
   /// The list of locations and assets in the current tree.
-  final List<NamedEntity> items;
+  final List<TreeNode> tree;
 }
 
 final class ErrorAssetState extends AssetState {

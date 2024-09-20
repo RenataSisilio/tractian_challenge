@@ -4,8 +4,6 @@ final class Location extends NamedEntity {
   Location({
     required super.id,
     required super.name,
-    this.parentId,
+    super.parentId,
   });
-
-  final String? parentId;
 }

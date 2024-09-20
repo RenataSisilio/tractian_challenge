@@ -1,19 +1,6 @@
 import '../../models/asset.dart';
 import '../errors/mapping_errors.dart';
 
-extension Mapping on Asset {
-  Map<String, dynamic> toMap() => {
-        'id': id,
-        'name': name,
-        'locationId': locationId,
-        'parentId': parentId,
-        'sensorId': sensorId,
-        'sensorType': sensorType,
-        'status': status,
-        'gatewayId': gatewayId,
-      };
-}
-
 extension AssetMapping on Map<String, dynamic> {
   Asset toAsset() => switch (this) {
         {
@@ -24,8 +11,7 @@ extension AssetMapping on Map<String, dynamic> {
             id: id,
             name: name,
             sensorType: this["sensorType"],
-            locationId: this["locationId"],
-            parentId: this["parentId"],
+            parentId: this["parentId"] ?? this["locationId"],
             status: this["status"],
             sensorId: this["sensorId"],
             gatewayId: this["gatewayId"],
