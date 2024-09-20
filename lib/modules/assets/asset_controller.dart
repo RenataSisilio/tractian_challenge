@@ -38,6 +38,8 @@ class AssetController extends Cubit<AssetState> {
   }
 
   List<TreeNode> _buildTree(List<NamedEntity> items) {
+    // TODO: verify tree size and build partially to improve performance
+
     final (rootNodes, subNodes) = _splitRootNodes(items);
 
     final tree = _insert(subNodes: subNodes, tree: rootNodes);
