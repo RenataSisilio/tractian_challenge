@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tractian_challenge/models/named_entity.dart';
+
+import '../../../models/named_entity.dart';
+import 'tree_node_tile.dart';
 
 class AssetTree extends StatelessWidget {
   const AssetTree({
@@ -14,9 +16,7 @@ class AssetTree extends StatelessWidget {
     return Expanded(
       child: ListView.builder(
         itemCount: items.length,
-        itemBuilder: (context, index) {
-          return Text(items[index].name);
-        },
+        itemBuilder: (context, index) => TreeNodeTile(items[index]),
       ),
     );
   }
