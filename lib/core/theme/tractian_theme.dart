@@ -28,17 +28,19 @@ abstract interface class TractianTheme {
     hintStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
   );
 
+  static final _chipTheme = ChipThemeData(
+    surfaceTintColor: _colorScheme.surface,
+    color: WidgetStateProperty.resolveWith((states) =>
+        states.contains(WidgetState.selected)
+            ? _colorScheme.surfaceContainer
+            : Colors.transparent),
+  );
+
   static final themeData = ThemeData(
     colorScheme: _colorScheme,
     appBarTheme: _appBarTheme,
     inputDecorationTheme: _inputDecorationTheme,
-    chipTheme: ChipThemeData(
-      surfaceTintColor: _colorScheme.surface,
-      color: WidgetStateProperty.resolveWith((states) =>
-          states.contains(WidgetState.selected)
-              ? _colorScheme.surfaceContainer
-              : Colors.transparent),
-    ),
+    chipTheme: _chipTheme,
     useMaterial3: true,
   );
 }
