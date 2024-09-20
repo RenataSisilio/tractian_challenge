@@ -43,6 +43,12 @@ class TreeNodeTile extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Flexible(child: Text(node.item.name)),
+                if (node.item is Asset &&
+                    (node.item as Asset).sensorType == 'energy')
+                  const _EnergySensorIndicator(),
+                if (node.item is Asset &&
+                    (node.item as Asset).status == 'alert')
+                  const _AlertIndicator(),
               ],
             ),
           ),
@@ -53,6 +59,39 @@ class TreeNodeTile extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _EnergySensorIndicator extends StatelessWidget {
+  const _EnergySensorIndicator();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.only(left: 4),
+      child: Icon(
+        TractianIcons.boltFilled,
+        size: 12,
+        color: Color(0xFF52C41A),
+      ),
+    );
+  }
+}
+
+class _AlertIndicator extends StatelessWidget {
+  const _AlertIndicator();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 8,
+      width: 8,
+      margin: const EdgeInsets.only(left: 4),
+      decoration: BoxDecoration(
+        color: const Color(0xFFED3833),
+        borderRadius: BorderRadius.circular(4),
       ),
     );
   }
