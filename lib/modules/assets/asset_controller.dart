@@ -48,33 +48,6 @@ class AssetController extends Cubit<AssetState> {
     }
   }
 
-  void _buildTreeAsync(List<NamedEntity> items) {
-    _tree.clear();
-
-    final (rootNodes, subNodes) = _splitRootNodes(items);
-
-    while (items.isNotEmpty) {
-      final itemSet = <NamedEntity>[];
-      if (items.length > 100) {
-        itemSet.addAll(items.take(100));
-        items.removeRange(0, 100);
-      } else {
-        itemSet.addAll(items);
-        items.clear();
-      }
-
-      _tree.addAll(rootNodes);
-      rootNodes.clear();
-
-      emit(SuccessAssetState(_tree));
-
-      _insert(subNodes: subNodes, tree: _tree);
-
-      emit(LoadingAssetState());
-      emit(SuccessAssetState(_tree.sorted));
-    }
-  }
-
   void _buildTree(List<NamedEntity> items, {bool onlyRootNodes = false}) {
     _tree.clear();
 
