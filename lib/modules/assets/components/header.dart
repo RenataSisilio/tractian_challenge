@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tractian_challenge/core/theme/tractian_icons.dart';
-import 'package:tractian_challenge/modules/assets/asset_controller.dart';
-import 'package:tractian_challenge/modules/assets/components/filter.dart';
+
+import '../../../core/theme/tractian_icons.dart';
+import '../asset_controller.dart';
+import 'filter.dart';
 
 class Header extends StatelessWidget {
   const Header(this._controller, {super.key});
@@ -27,14 +28,16 @@ class Header extends StatelessWidget {
             spacing: 8,
             children: [
               Filter(
+                notifier: _controller.energyFilterNotifier,
                 label: 'Sensor de Energia',
                 icon: TractianIcons.bolt,
-                onChange: _controller.filterEnergySensor,
+                onChange: _controller.applyFilters,
               ),
               Filter(
+                notifier: _controller.alertFilterNotifier,
                 label: 'Crítico',
                 icon: TractianIcons.critical,
-                onChange: _controller.filterCritical,
+                onChange: _controller.applyFilters,
               ),
             ],
           ),

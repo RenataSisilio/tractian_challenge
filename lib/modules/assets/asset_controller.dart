@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../core/app_errors.dart';
 import '../../core/utils/extensions/sort_tree.dart';
@@ -14,6 +15,11 @@ class AssetController extends Cubit<AssetState> {
 
   final AssetRepository _assetRepo;
   final LocationRepository _locationRepo;
+
+  final energyFilterNotifier = ValueNotifier(false);
+  final alertFilterNotifier = ValueNotifier(false);
+
+  final List<TreeNode> _fullTree = [];
 
   /// Loads all data from the current company.
   Future<void> loadFrom(String companyId) async {
@@ -31,7 +37,10 @@ class AssetController extends Cubit<AssetState> {
         allItems.addAll(e);
       }
 
-      emit(SuccessAssetState(_buildTree(allItems)));
+      _fullTree.clear();
+      _fullTree.addAll(_buildTree(allItems));
+
+      emit(SuccessAssetState(_fullTree));
     } on AppError catch (e) {
       emit(ErrorAssetState(e));
     }
@@ -94,9 +103,56 @@ class AssetController extends Cubit<AssetState> {
     return null;
   }
 
-  void filterByName(String search) {}
+  void filterByName(String search) {
+    if (state is SuccessAssetState) {
+      applyFilters();
+      final tree = (state as SuccessAssetState).tree;
+      final items = <NamedEntity>[];
 
-  void filterEnergySensor(bool isFiltering) {}
+      for (var node in tree) {
+        for (var item in node.searchByName(search)) {
+          if (!items.contains(item)) {
+            items.add(item);
+          }
+        }
+      }
 
-  void filterCritical(bool isFiltering) {}
+      final newTree = _buildTree(items);
+
+      emit(LoadingAssetState());
+      emit(SuccessAssetState(newTree));
+    }
+  }
+
+  void applyFilters() {
+    if (!energyFilterNotifier.value && !alertFilterNotifier.value) {
+      emit(SuccessAssetState(_fullTree));
+    } else if (state is SuccessAssetState) {
+      final items = <NamedEntity>[];
+
+      if (energyFilterNotifier.value) {
+        for (var node in _fullTree) {
+          for (var item in node.energyChildren) {
+            if (!items.contains(item)) {
+              items.add(item);
+            }
+          }
+        }
+      }
+      if (alertFilterNotifier.value) {
+        for (var node in _fullTree) {
+          for (var item in node.alertChildren) {
+            if (!items.contains(item)) {
+              items.add(item);
+            }
+          }
+        }
+      }
+
+      final newTree = _buildTree(items);
+
+      emit(LoadingAssetState());
+      emit(SuccessAssetState(newTree));
+    }
+  }
 }

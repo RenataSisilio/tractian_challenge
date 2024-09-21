@@ -15,4 +15,10 @@ final class Asset extends NamedEntity {
   final String? sensorType;
   final String? status;
   final String? gatewayId;
+
+  bool get isComponent => sensorType != null;
+
+  bool get isEnergySensor => sensorType == 'energy';
+
+  bool get hasAlert => status == 'alert';
 }

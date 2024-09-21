@@ -35,19 +35,19 @@ class TreeNodeTile extends StatelessWidget {
                   ),
                   child: switch (node.item) {
                     Location() => const Icon(TractianIcons.location),
-                    Asset() => Icon((node.item as Asset).sensorType == null
-                        ? TractianIcons.asset
-                        : TractianIcons.component),
+                    Asset() => Icon((node.item as Asset).isComponent
+                        ? TractianIcons.component
+                        : TractianIcons.asset),
                     _ => const SizedBox.shrink(),
                   },
                 ),
                 const SizedBox(width: 4),
                 Flexible(child: Text(node.item.name)),
                 if (node.item is Asset &&
-                    (node.item as Asset).sensorType == 'energy')
+                    (node.item as Asset).isEnergySensor)
                   const _EnergySensorIndicator(),
                 if (node.item is Asset &&
-                    (node.item as Asset).status == 'alert')
+                    (node.item as Asset).hasAlert)
                   const _AlertIndicator(),
               ],
             ),

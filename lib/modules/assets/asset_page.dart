@@ -27,18 +27,22 @@ class AssetPage extends StatelessWidget {
           icon: const Icon(TractianIcons.chevronLeft),
         ),
       ),
-      body: BlocBuilder<AssetController, AssetState>(
-        bloc: _controller,
-        builder: (context, state) => switch (state) {
-          LoadingAssetState() => const LoadingView(),
-          ErrorAssetState() => ErrorView(state.error.message),
-          SuccessAssetState() => Column(
-              children: [
-                Header(_controller),
-                AssetTree(tree: state.tree),
-              ],
-            ),
-        },
+      body: Column(
+        children: [
+          Header(_controller),
+          BlocBuilder<AssetController, AssetState>(
+            bloc: _controller,
+            builder: (context, state) => switch (state) {
+              LoadingAssetState() => const LoadingView(),
+              ErrorAssetState() => ErrorView(state.error.message),
+              SuccessAssetState() => Column(
+                  children: [
+                    AssetTree(tree: state.tree),
+                  ],
+                ),
+            },
+          ),
+        ],
       ),
     );
   }

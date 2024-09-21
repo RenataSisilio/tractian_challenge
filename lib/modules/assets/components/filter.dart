@@ -6,16 +6,16 @@ class Filter extends StatelessWidget {
     required this.label,
     required this.icon,
     required this.onChange,
+    required this.notifier,
   });
 
   final String label;
   final IconData icon;
-  final void Function(bool) onChange;
+  final VoidCallback onChange;
+  final ValueNotifier<bool> notifier;
 
   @override
   Widget build(BuildContext context) {
-    final notifier = ValueNotifier(false);
-
     return ValueListenableBuilder(
       valueListenable: notifier,
       builder: (context, value, child) => FilterChip(
@@ -38,7 +38,7 @@ class Filter extends StatelessWidget {
         ),
         onSelected: (value) {
           notifier.value = value;
-          onChange(value);
+          onChange();
         },
       ),
     );
