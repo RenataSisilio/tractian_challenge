@@ -21,8 +21,10 @@ class AssetController extends Cubit<AssetState> {
   final energyFilterNotifier = ValueNotifier(false);
   final alertFilterNotifier = ValueNotifier(false);
 
-  final List<TreeNode> _tree = [];
-  final List<TreeNode> _fullTree = [];
+  final _tree = <TreeNode>[];
+  final _fullTree = <TreeNode>[];
+
+  final _hiddenNodes = <TreeNode>[];
 
   /// Loads all data from the current company.
   Future<void> loadFrom(String companyId) async {
@@ -56,11 +58,15 @@ class AssetController extends Cubit<AssetState> {
     _tree.addAll(rootNodes);
     rootNodes.clear();
 
-    if (!onlyRootNodes) {
+    if (onlyRootNodes) {
+      _hiddenNodes.addAll(subNodes);
+    } else {
       _insert(subNodes: subNodes, tree: _tree);
     }
 
-    emit(SuccessAssetState(_tree.sorted));
+    _tree.sortByChildNumber();
+
+    emit(SuccessAssetState(_tree));
   }
 
   (List<TreeNode>, List<TreeNode>) _splitRootNodes(List<NamedEntity> items) {
@@ -156,5 +162,21 @@ class AssetController extends Cubit<AssetState> {
 
       _buildTree(items);
     }
+  }
+
+  void findChildren(TreeNode root) {
+    emit(LoadingAssetState());
+
+    for (var subNode in _hiddenNodes) {
+      if (subNode.item.parentId == root.id) {
+        root.addChild(subNode);
+      }
+    }
+
+    for (var subNode in root.children) {
+      _hiddenNodes.remove(subNode);
+    }
+
+    emit(SuccessAssetState(_tree));
   }
 }

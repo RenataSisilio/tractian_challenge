@@ -4,11 +4,17 @@ import '../../../core/theme/tractian_icons.dart';
 import '../../../core/utils/typedefs/tree_node.dart';
 import '../../../models/asset.dart';
 import '../../../models/location.dart';
+import '../asset_controller.dart';
 
 class TreeNodeTile extends StatelessWidget {
-  const TreeNodeTile(this.node, {super.key});
+  const TreeNodeTile(
+    this.node, {
+    super.key,
+    required AssetController controller,
+  }) : _controller = controller;
 
   final TreeNode node;
+  final AssetController _controller;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +26,9 @@ class TreeNodeTile extends StatelessWidget {
         builder: (context, value, _) => Column(
           children: [
             InkWell(
-              onTap: () => isExpanded.value = !value,
+              onTap: () => node.hasChildren
+                  ? isExpanded.value = !value
+                  : _controller.findChildren(node),
               child: Row(
                 children: [
                   SizedBox(
@@ -63,7 +71,7 @@ class TreeNodeTile extends StatelessWidget {
               ...node.children.map(
                 (e) => Padding(
                   padding: const EdgeInsets.only(left: 16),
-                  child: TreeNodeTile(e),
+                  child: TreeNodeTile(e, controller: _controller),
                 ),
               ),
           ],

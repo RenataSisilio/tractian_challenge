@@ -39,7 +39,7 @@ class AssetPage extends StatelessWidget {
                 ErrorAssetState() => ErrorView(state.error.message),
                 SuccessAssetState() => RefreshIndicator(
                     onRefresh: () => _controller.loadFrom(companyId),
-                    child: AssetTree(tree: state.tree),
+                    child: AssetTree(tree: state.tree, controller: _controller),
                   ),
               },
             ),
