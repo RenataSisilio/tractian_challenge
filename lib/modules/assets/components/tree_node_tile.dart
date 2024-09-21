@@ -12,53 +12,62 @@ class TreeNodeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isExpanded = ValueNotifier(true);
     return Padding(
       padding: const EdgeInsets.all(4),
-      child: Column(
-        children: [
-          InkWell(
-            // TODO: show/hide children and transform icon
-            onTap: () {},
-            child: Row(
-              children: [
-                SizedBox(
-                  height: 24,
-                  width: 24,
-                  child: node.hasChildren
-                      ? const Icon(TractianIcons.chevronDown, size: 10)
-                      : null,
-                ),
-                IconTheme(
-                  data: IconThemeData(
-                    color: Theme.of(context).colorScheme.surfaceContainer,
-                    size: 22,
+      child: ValueListenableBuilder(
+        valueListenable: isExpanded,
+        builder: (context, value, _) => Column(
+          children: [
+            InkWell(
+              onTap: () => isExpanded.value = !value,
+              child: Row(
+                children: [
+                  SizedBox(
+                    height: 24,
+                    width: 24,
+                    child: node.hasChildren
+                        ? AnimatedRotation(
+                            turns: value ? 0 : -0.25,
+                            duration: Durations.short4,
+                            child: const Icon(
+                              TractianIcons.chevronDown,
+                              size: 10,
+                            ),
+                          )
+                        : null,
                   ),
-                  child: switch (node.item) {
-                    Location() => const Icon(TractianIcons.location),
-                    Asset() => Icon((node.item as Asset).isComponent
-                        ? TractianIcons.component
-                        : TractianIcons.asset),
-                    _ => const SizedBox.shrink(),
-                  },
+                  IconTheme(
+                    data: IconThemeData(
+                      color: Theme.of(context).colorScheme.surfaceContainer,
+                      size: 22,
+                    ),
+                    child: switch (node.item) {
+                      Location() => const Icon(TractianIcons.location),
+                      Asset() => Icon((node.item as Asset).isComponent
+                          ? TractianIcons.component
+                          : TractianIcons.asset),
+                      _ => const SizedBox.shrink(),
+                    },
+                  ),
+                  const SizedBox(width: 4),
+                  Flexible(child: Text(node.item.name)),
+                  if (node.item is Asset && (node.item as Asset).isEnergySensor)
+                    const _EnergySensorIndicator(),
+                  if (node.item is Asset && (node.item as Asset).hasAlert)
+                    const _AlertIndicator(),
+                ],
+              ),
+            ),
+            if (value)
+              ...node.children.map(
+                (e) => Padding(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: TreeNodeTile(e),
                 ),
-                const SizedBox(width: 4),
-                Flexible(child: Text(node.item.name)),
-                if (node.item is Asset &&
-                    (node.item as Asset).isEnergySensor)
-                  const _EnergySensorIndicator(),
-                if (node.item is Asset &&
-                    (node.item as Asset).hasAlert)
-                  const _AlertIndicator(),
-              ],
-            ),
-          ),
-          ...node.children.map(
-            (e) => Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: TreeNodeTile(e),
-            ),
-          ),
-        ],
+              ),
+          ],
+        ),
       ),
     );
   }
