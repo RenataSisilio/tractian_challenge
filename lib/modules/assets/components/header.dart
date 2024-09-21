@@ -17,6 +17,8 @@ class Header extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextField(
+            focusNode: _controller.searchFocusNode,
+            controller: _controller.searchController,
             decoration: const InputDecoration(
               prefixIcon: Icon(TractianIcons.search, size: 12.5),
               hintText: 'Buscar Ativo ou Local',

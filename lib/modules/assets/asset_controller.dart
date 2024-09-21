@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 
 import '../../core/app_errors.dart';
 import '../../core/utils/extensions/sort_tree.dart';
@@ -16,6 +16,8 @@ class AssetController extends Cubit<AssetState> {
   final AssetRepository _assetRepo;
   final LocationRepository _locationRepo;
 
+  final searchController = TextEditingController();
+  final searchFocusNode = FocusNode();
   final energyFilterNotifier = ValueNotifier(false);
   final alertFilterNotifier = ValueNotifier(false);
 
@@ -105,6 +107,8 @@ class AssetController extends Cubit<AssetState> {
 
   void filterByName(String search) {
     if (state is SuccessAssetState) {
+      energyFilterNotifier.value = false;
+      alertFilterNotifier.value = false;
       applyFilters();
       final tree = (state as SuccessAssetState).tree;
       final items = <NamedEntity>[];
@@ -128,6 +132,8 @@ class AssetController extends Cubit<AssetState> {
     if (!energyFilterNotifier.value && !alertFilterNotifier.value) {
       emit(SuccessAssetState(_fullTree));
     } else if (state is SuccessAssetState) {
+      searchFocusNode.unfocus();
+      searchController.text = '';
       final items = <NamedEntity>[];
 
       if (energyFilterNotifier.value) {
