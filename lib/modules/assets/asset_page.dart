@@ -30,17 +30,19 @@ class AssetPage extends StatelessWidget {
       body: Column(
         children: [
           Header(_controller),
-          BlocBuilder<AssetController, AssetState>(
-            bloc: _controller,
-            builder: (context, state) => switch (state) {
-              LoadingAssetState() => const LoadingView(),
-              ErrorAssetState() => ErrorView(state.error.message),
-              SuccessAssetState() => Column(
-                  children: [
-                    AssetTree(tree: state.tree),
-                  ],
-                ),
-            },
+          const Divider(height: 1),
+          Expanded(
+            child: BlocBuilder<AssetController, AssetState>(
+              bloc: _controller,
+              builder: (context, state) => switch (state) {
+                LoadingAssetState() => const LoadingView(),
+                ErrorAssetState() => ErrorView(state.error.message),
+                SuccessAssetState() => RefreshIndicator(
+                    onRefresh: () => _controller.loadFrom(companyId),
+                    child: AssetTree(tree: state.tree),
+                  ),
+              },
+            ),
           ),
         ],
       ),
