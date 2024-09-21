@@ -21,6 +21,7 @@ class AssetController extends Cubit<AssetState> {
   final energyFilterNotifier = ValueNotifier(false);
   final alertFilterNotifier = ValueNotifier(false);
 
+  final List<TreeNode> _tree = [];
   final List<TreeNode> _fullTree = [];
 
   /// Loads all data from the current company.
@@ -39,23 +40,54 @@ class AssetController extends Cubit<AssetState> {
         allItems.addAll(e);
       }
 
-      _fullTree.clear();
-      _fullTree.addAll(_buildTree(allItems));
+      _buildTree(allItems, onlyRootNodes: allItems.length > 1000);
 
-      emit(SuccessAssetState(_fullTree));
+      _fullTree.addAll(_tree);
     } on AppError catch (e) {
       emit(ErrorAssetState(e));
     }
   }
 
-  List<TreeNode> _buildTree(List<NamedEntity> items) {
-    // TODO: verify tree size and build partially to improve performance
+  void _buildTreeAsync(List<NamedEntity> items) {
+    _tree.clear();
 
     final (rootNodes, subNodes) = _splitRootNodes(items);
 
-    final tree = _insert(subNodes: subNodes, tree: rootNodes);
+    while (items.isNotEmpty) {
+      final itemSet = <NamedEntity>[];
+      if (items.length > 100) {
+        itemSet.addAll(items.take(100));
+        items.removeRange(0, 100);
+      } else {
+        itemSet.addAll(items);
+        items.clear();
+      }
 
-    return tree.sorted;
+      _tree.addAll(rootNodes);
+      rootNodes.clear();
+
+      emit(SuccessAssetState(_tree));
+
+      _insert(subNodes: subNodes, tree: _tree);
+
+      emit(LoadingAssetState());
+      emit(SuccessAssetState(_tree.sorted));
+    }
+  }
+
+  void _buildTree(List<NamedEntity> items, {bool onlyRootNodes = false}) {
+    _tree.clear();
+
+    final (rootNodes, subNodes) = _splitRootNodes(items);
+
+    _tree.addAll(rootNodes);
+    rootNodes.clear();
+
+    if (!onlyRootNodes) {
+      _insert(subNodes: subNodes, tree: _tree);
+    }
+
+    emit(SuccessAssetState(_tree.sorted));
   }
 
   (List<TreeNode>, List<TreeNode>) _splitRootNodes(List<NamedEntity> items) {
@@ -75,7 +107,7 @@ class AssetController extends Cubit<AssetState> {
     return (tree, subNodes);
   }
 
-  List<TreeNode> _insert({
+  void _insert({
     required List<TreeNode> subNodes,
     required List<TreeNode> tree,
   }) {
@@ -89,8 +121,6 @@ class AssetController extends Cubit<AssetState> {
         }
       }
     }
-
-    return tree;
   }
 
   TreeNode? _searchFor(String id, {required List<TreeNode> tree}) {
@@ -110,10 +140,9 @@ class AssetController extends Cubit<AssetState> {
       energyFilterNotifier.value = false;
       alertFilterNotifier.value = false;
       applyFilters();
-      final tree = (state as SuccessAssetState).tree;
       final items = <NamedEntity>[];
 
-      for (var node in tree) {
+      for (var node in _fullTree) {
         for (var item in node.searchByName(search)) {
           if (!items.contains(item)) {
             items.add(item);
@@ -121,10 +150,7 @@ class AssetController extends Cubit<AssetState> {
         }
       }
 
-      final newTree = _buildTree(items);
-
-      emit(LoadingAssetState());
-      emit(SuccessAssetState(newTree));
+      _buildTree(items);
     }
   }
 
@@ -155,10 +181,7 @@ class AssetController extends Cubit<AssetState> {
         }
       }
 
-      final newTree = _buildTree(items);
-
-      emit(LoadingAssetState());
-      emit(SuccessAssetState(newTree));
+      _buildTree(items);
     }
   }
 }
